@@ -79,6 +79,26 @@
 \declaretheorem{corollary}
 \declaretheorem{proposition}
 
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+  
+\newcounter{eqset} % Define a separate counter
+\renewcommand{\theeqset}{\arabic{eqset}} % Numbering style for the equation set
+
+% Define the command for captioned equation sets
+\newcommand{\captionedequationset}[1]{
+    \stepcounter{eqset} % Step the equation set counter without affecting references
+    \noindent
+    \begin{minipage}{\linewidth}
+        \centering
+        \textbf{Equation Set~\theeqset:} #1
+    \end{minipage}
+    \vspace{\baselineskip}
+    \phantomsection % Create a proper referencing point for hyperref, if used
+    \addcontentsline{toc}{equation}{Equation Set~\theeqset: #1} % Add to TOC, if needed
+}
+
+
 % -------------------- Metadata -------------------- %
 
 \title{$title$%

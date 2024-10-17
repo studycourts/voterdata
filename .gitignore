@@ -50,3 +50,7 @@ rsconnect/
 
 # Raw Data
 rawdata/
+
+# Rendered pdfs
+
+docs/*.pdf

@@ -1,0 +1,293 @@
+---
+title: "R Code Appendix for Gill and Zorn, 'Debunking the Erroneous Claims of Election Fraud'"
+thanks: "The authors write on behalf of themselves. Nothing in this report should be read as speaking for any institution with which Professor Gill or Professor Zorn are associated. This manuscript is currently under development. Please do not cite this working paper without express permission from the authors."
+author:
+  - name: Rebecca Gill, Ph.D.
+    affiliation: University of Nevada Las Vegas
+    email: rebecca.gill@unlv.edu
+    number: 1
+  - name: Christopher Zorn, Ph.D.
+    affiliation: Pennsylvania State University
+    email: zorn@psu.edu
+    number: 2
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+bibliography: references.bib
+output: 
+  bookdown::pdf_document2:
+    template: appendix_template.tex
+    keep_tex: true
+header-includes:
+  - \usepackage[labelsep=period,font=small,labelfont=bf,margin=5ex]{caption}
+  - \captionsetup[table]{position=top}
+  - \captionsetup[figure]{position=top}
+---
+
+What follows is the R code used to generate the analyses in the original paper.
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE, include = FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      eval = TRUE)
+
+knitr::opts_knit$set(root.dir = "../")
+
+options(tinytex.install_packages = FALSE)
+
+```
+
+
+```{r libs}
+
+library(pandoc)
+pandoc_activate("3.1.6.2", rmarkdown = TRUE)
+
+library(knitr)
+library(cowplot)
+library(olsrr)
+library(car)
+library(texreg)
+library(vtable)
+library(data.table)                   
+library(ggeffects)
+library(GGally)
+library(datawizard)
+library(broom)
+library(tidyverse)
+
+```
+
+```{r clark1, results='asis'}
+
+cc <- fread(
+  "https://elections.clarkcountynv.gov/electionresultsTV/sov/20G/PRESIDENT.txt")
+
+# wrangle data
+
+candidate_columns <- c(
+  "biden" = "Biden, Joseph R.",
+  "trump" = "Trump, Donald J.",
+  "jorg"  = "Jorgensen, Jo",
+  "blank" ="Blankenship, Don",
+  "none"  = "None of These Candidates"
+)
+
+name_mapping <- c(candidate_columns,
+  "type"     = "Tally Type",
+  "precinct" = "Precinct",
+  "reg"      = "Registration",
+  "turnout"  = "Turnout",
+  "total"    = "Total Votes"
+)
+
+cc <- rename(cc, all_of(name_mapping))
+
+candidates <- c("biden", "trump", "jorg", "blank", "none")
+
+cc <- cc %>%
+  mutate(across(all_of(candidates), as.numeric))
+
+cc <- cc %>%
+  mutate(
+    type = factor(type, 
+                  levels = c("Totals", "Election Day", "Early Vote", "Mail"),
+                  labels = c("totals", "dayof", "early", "mail"))
+  )
+
+cc2 <- cc %>%
+  filter(type %in% c("early", "mail")) %>%
+  select(precinct, type, trump, biden) %>%
+  pivot_wider(names_from = type, values_from = c(trump, biden), names_sep = "_") %>%
+  rename(
+    t_e = trump_early,
+    t_m = trump_mail,
+    b_e = biden_early,
+    b_m = biden_mail
+  )
+
+cc2 <- na.omit(cc2)
+row.names(cc2) <- as.character(cc2$precinct)
+sumtable(cc2, 
+         vars = c('t_e', 't_m', 'b_e', 'b_m'),
+         out = "latex")
+
+```
+
+```{r clark2, results = 'asis'}
+
+cc2 <- cc2 %>%
+  mutate(x = t_e / (t_e + b_e)) %>%
+  mutate(y = t_m / (t_m + b_m)) %>%
+  mutate(g = t_e / (t_e + b_m)) %>%
+  mutate(h = t_m / (t_m + b_e)) %>%
+  mutate(n = t_e + b_e + t_m + b_m) %>%
+  mutate(omega = (t_e + b_e) / n) %>%
+  mutate(lambda = (t_e + b_m) / n) %>%
+  mutate(alpha = (t_e + t_m) / n)
+
+sumtable(cc2, 
+         vars = c('x', 'y', 'g', 'h', 'n', 'omega', 'lambda', 'alpha'),
+         out = 'latex')
+
+```
+
+```{r clark3, results = 'asis'}
+
+std.fit <- lm(alpha ~ y + x, data = cc2)
+bst.fit <- lm(alpha ~ g + h, data = cc2)
+
+texreg(list(std.fit, bst.fit),
+       custom.model.names = c("Standard", "Bastard"),
+       caption.above = TRUE)
+```
+
+```{r figz2, fig.cap="Predicted Values of Trump Vote Share"}
+
+std.prd <- ggpredict(std.fit, terms = c("y", "x"))
+std.plt <- plot(std.prd) 
+
+bst.prd <- ggpredict(bst.fit, terms = c("g", "h"))
+bst.plt <- plot(bst.prd)
+
+plot_grid(std.plt, bst.plt)
+
+```
+
+```{r washoe1, results='asis'}
+
+wc <- read_csv("rawdata/Washoe.csv")
+
+# wrangle
+
+reno5 <- wc %>% # select variables
+  select(PrecinctPortion, CountingGroup,
+         starts_with("RENO.CITY.COUNCIL..WARD.5"))
+
+candidate_columns <- c( # candidate vars to rename
+  "sbp" = "RENO.CITY.COUNCIL..WARD.5..Vote.For.1._BROWNING.PEUCHAUD..SHEILA_NP",
+  "bmc" = "RENO.CITY.COUNCIL..WARD.5..Vote.For.1._CASSIDY..BRIAN.M._NP",
+  "dtr" = "RENO.CITY.COUNCIL..WARD.5..Vote.For.1._REESE..DEVON.T._NP",
+  "tcw" = "RENO.CITY.COUNCIL..WARD.5..Vote.For.1._WEBSTER..TARA.C._NP"
+)
+
+name_mapping <- c(candidate_columns, # all vars to rename
+  "precinct" = "PrecinctPortion",
+  "type"     = "CountingGroup"
+)
+
+reno5 <- rename(reno5, all_of(name_mapping)) # rename them
+
+candidates <- c("sbp", "bmc", "dtr", "tcw") # new list of candidates
+
+reno5 <- reno5 %>% # fix the precinct var and drop obs from other wards
+  mutate(across(all_of(candidates), as.numeric)) %>%
+  drop_na(all_of(candidates)) %>%
+  mutate(precinct = str_extract(precinct, "\\((\\d+)\\)")) %>%
+  mutate(precinct = factor(str_replace_all(precinct, "[()]", "")))
+
+reno5 <- reno5 %>% # fix the type variable
+  mutate(
+    type = factor(type, 
+                  levels = c("Early Voting", "Election Day", "Mail"),
+                  labels = c("early", "dayof", "mail"))
+  )
+
+reno5.sum <- reno5 %>% # make summary
+  group_by(precinct, type) %>%
+  summarize(across(c(sbp, bmc, dtr, tcw), 
+                   sum, 
+                   na.rm = TRUE), 
+            .groups = 'drop')
+
+reno5.wide <- reno5.sum %>%
+  pivot_wider(names_from = type, 
+              values_from = c(sbp, bmc, dtr, tcw), 
+              names_sep = "_")
+
+labz <- c('SBP Early Vote', 'SBP Election Day', 'SBP Mail',
+          'BMC Early Vote', 'BMC Election Day', 'BMC Mail',
+          'DTR Early Vote', 'DTR Election Day', 'DTR Mail',
+          'TCW Early Vote', 'TCW Election Day', 'TCW Mail')
+
+reno5.sm <- na.omit(reno5.wide) # drop the NAs
+reno5.sm <- reno5.sm[-2,] # drop the NAN 
+
+sumtable(reno5.sm, 
+         vars = c('sbp_early', 'sbp_dayof', 'sbp_mail',
+                  'bmc_early', 'bmc_dayof', 'bmc_mail',
+                  'dtr_early', 'dtr_dayof', 'dtr_mail',
+                  'tcw_early', 'tcw_dayof', 'tcw_mail'),
+         labels = labz,
+         out = "latex")
+
+```
+
+```{r washoe2, results = 'asis'}
+
+reno5.sm <- reno5.sm %>%
+  mutate(A = bmc_early + bmc_dayof + sbp_dayof) %>%
+  mutate(B = dtr_early + dtr_dayof + bmc_mail) %>%
+  mutate(C = tcw_mail) %>%
+  mutate(D = dtr_mail + sbp_mail) %>%
+  mutate(n = A + B + C + D) %>%
+  mutate(g = A / (A + D)) %>%
+  mutate(h = C / (C + B)) %>%
+  mutate(lambda = (A + D) / n) %>%
+  mutate(alpha = (A + C) / n)
+
+sumtable(reno5.sm, 
+         vars = c('A', 'B', 'C', 'D', 'n', 'g', 'h','lambda', 'alpha'),
+         out = 'latex')
+
+```
+
+```{r renofitz, results = 'asis'}
+
+reno.fit <- lm(alpha ~ g + h, data = reno5.sm)
+reno3.fit <- lm(alpha ~ g + poly(h, 3), data = reno5.sm)
+texreg(list(reno.fit, reno3.fit),
+       custom.model.names = c("Bastard Model", "Bastard Cubic Model"),
+       caption.above = TRUE)
+
+```
+
+```{r hists1, fig.cap="Distribution of Omega and Lambda (Calculated)"}
+
+omega.hist <- ggplot(cc2, aes(x = omega)) +
+  geom_histogram(fill = "cornflowerblue", 
+                 color = "black") + 
+  labs(title="Distribution of Omega",
+       x = "Omega") 
+
+lambda.hist <- ggplot(cc2, aes(x = lambda)) +
+  geom_histogram(fill = "firebrick", 
+                 color = "black") + 
+  labs(title="Distribution of Lambda",
+       x = "Lambda")
+
+plot_grid(omega.hist, lambda.hist)
+```
+
+```{r residz}
+
+cc2 <- augment(bst.fit) # put resids into data frame
+cc2$dist0 <- abs(cc2$.resid) # calculate error magnitude
+
+ggplot(cc2, aes(x = .fitted, y = .resid, color = dist0)) +
+  geom_point() +
+  scale_color_gradient(low = "cornflowerblue", high = "firebrick") +
+  labs(color = "Error Size") +
+  xlab("Predicted Alpha") +
+  ylab("Residual") +
+  theme_minimal() +
+  theme(legend.position = "right")
+
+```
+
+```{r infl, results = 'hide', fig.keep = 'all', fig.cap="Influence of Outliers on Lambda Estimate"}
+
+influencePlot(bst.fit)
+
+```
+

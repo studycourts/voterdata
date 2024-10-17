@@ -1,0 +1,37 @@
+## 3. The Identical Precincts Analysis
+
+### Rozenas Precinct-Level Analysis
+
+A commonly-used, widely-accepted approach for detecting voter fraud is through the analysis of precinct-level vote shares. Decades of scientific research support the idea that election fraud is widely detectable by analyzing party or candidate vote shares at low levels of geographic aggregation [@mebanejrRobust2004; @klimekStatistical2012; @gehlbachFormal2021]. The contemporary state of the art in this area is due to @rozenasDetecting2017, who develops a model for the detection of what he terms "coarse" vote shares: vote share numbers that can be expressed as fractions with a low denominator. Rozenas' model estimates a range of plausible values for the degree of potential vote fraud (expressed as a percentage of all precincts in which fraud may have occurred), and does so while carefully addressing the potential for "false positives" (incorrect attributions of fraud that can happen solely due to chance).
+
+We apply first Rozenas' model to data from the 2024 Washoe County primary elections, aggregating indivudual votes to the precinct level. We consider two elections which gave rise to the recent controversy over election certification: the the Republican County Commission race in District Four, and the non-partisan race for school board trustee in District G (at-large). The former race saw five candidates running: Clara Andriola, Mark Lawson, Tracey Hilton-Thomas, Trista Gomez, and John L. Walter II. In the latter race, there were seven candidates: Perry Rosenstein, Diane Nicolet, Alicia Woo, Paul White, Monica Lehman, Jacqlyn Di Carlo, and Nathaniel Phillipps.
+
+Tables X and Y report the results of Rozenas' analysis The tables contain the point estimates of the percentage of precincts with fraud along with the two-tailed 95 percent bootstrapped confidence intervals for each estimate. The results in Table \@ref(tab:ccr1) are for the County Commission race, while those in Table \@ref(tab:sbtr1) are for the race for school board trustee.
+
+| Candidate | Estimate | 95% CI       |
+|-----------|----------|--------------|
+| Andriola  | 1.66     | (0.00, 5.97) |
+| Lawson    | 0.79     | (0.00, 2.13) |
+| Hilton    | 0.17     | (0.00, 2.13) |
+| Gomez     | 0.00     | (0.00, 2.13) |
+| Walter    | 0.23     | (0.00, 2.13) |
+
+: (#tab:ccr1) Rozenas Model: County Commission Race
+
+| Candidate  | Estimate | 95% CI       |
+|------------|----------|--------------|
+| Rosenstein | 0.44     | (0.00, 0.88) |
+| Nicolet    | 0.61     | (0.00, 1.40) |
+| Woo        | 0.51     | (0.00, 1.12) |
+| White      | 0.22     | (0.00, 1.27) |
+| Lehman     | 1.02     | (0.00, 1.61) |
+| Di Carlo   | 0.48     | (0.00, 1.15) |
+| Phillipps  | 0.33     | (0.00, 0.68) |
+
+: (#tab:sbtr1) Rozenas Model: School Board Trustee Race
+
+The results in Tables (#tab:ccr1) and (#tab:sbtr1) illustrate several things. First, the estimated percentages of precincts with fraud are very smalle; for ten of the twelve candidates' precinct-level percentages, the estimate is below one percent. The highest value is 1.66 percent. Also, all twelve bootstrap confidence intervals include zero as a lower bound, suggesting that we cannot rule out the hypothesis that there are no irregularites present for any of the twelve candidates. Put more simply, these analyses show no evidence of fraud.
+
+Substantively, the low levels of estimated fraud means that in no instance would there be fraud that could have had an impact on the outcome of any of these races. The highest value of the 95% confidence interval for the candidate with the highest point estimate is for Clara Andriola in the County Commission race. If we are to assume that the value for Andriola actually is at the very edge of that confidence interval, this would suggest that 5.97 percent of precincts show evidence of potential irregularities. Even in this example, even in the exceedingly rare case that those precincts with irregularities were those with the largest vote totals, this still would not have been enough to shift the outcome of the race. Andriola won that race with 43.34 percent of the total vote. The next highest vote-getter, Mark Lawson, received 24.9 percent of the vote. Of the 47 total precincts, the three largest (which is six percent of precincts) accounted for 698 of Andriola's 4055 votes. Even if we gave every single one of those votes to her closest competitor, she would still have won by a margin of 3354 to 3028.
+
+**START HERE**
