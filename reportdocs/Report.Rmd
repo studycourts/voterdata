@@ -78,7 +78,7 @@ Among the documentation presented in the July 8, 2024, blog post by Beadles is a
 
 ### Solomon's Math
 
-The argument Solomon makes is explained in a YouTube video called "Fish Tank Paradox" [@solomonFish2023]. In it, he focuses on the various components of the non-election day (NED) vote. His main argument is that, because you can create an equation that can provide a good estimate candidate's total vote share without explicitly specifying the relative proportion of votes between early vote ballots and mail-in ballots, the election must have been subject to intentional tampering. We summarize Solomon's presentation below before explaining why this is not the slam-dunk case he asserts it to be.
+The argument Solomon makes is explained in a YouTube video called "Fish Tank Paradox" [@solomonFish2023]. In it, he focuses on the various components of the non-election day (NED) vote. His main argument is that, because you can create an equation that can provide a good estimate of a candidate's total vote share without explicitly specifying the relative proportion of votes between early vote ballots and mail-in ballots, the election must have been subject to intentional tampering. We summarize Solomon's presentation below before explaining why this is not the slam-dunk case he asserts it to be.
 
 Solomon begins by defining several pieces of information about the vote share that would be available to precinct workers in any given election. In the video, he alternates among a bunch of different notation for each of the concepts, but we will stick with his first notation to make it easier to follow. Here, let's assume that he's talking about any particular precinct $k$. For simplicity purposes, we'll leave the $k$ subscript off of these equations until it's necessary later on in the process. The first five pieces of information about the vote in a two-candidate race between Donald Trump and Joe Biden are as follows:
 
@@ -115,7 +115,7 @@ From here, Solomon presents an equation to calculate $\alpha$ as a function of $
 
 This, of course, is pretty straightforward. Although Solomon's presentation can be confusing on account of his frequent notation changes and his use of oily fish tanks as an analogy, the underlying ideas make a good deal of sense. Indeed, we could also make this idea fit better with the way elections tend to happen in Nevada---namely that there are often more than two candidates and there is a "none of these candidates" option in state-wide and presidential elections. But this isn't where Solomon takes things.
 
-His next step is to move around some of the proportions to calculate a some additional values. Although the setup for these calculations is a bit confusing in the video, it essentially boils down to this: In the first set of equations, we tended to lump similar groups of observations together. We either put both types of ballots marked for one of the candidates together or we put both candidates' ballots together by which type of ballots they were. Here, though, Solomon makes an argument that there is something about changing the calculations so that they are unintelligible (e.g., lumping Trump's mail ballots together with Biden's early vote ballots) that makes it easier for government officials to "cheat" when they tally votes (or, alternatively he may be suggesting here that it makes it easier for them to *hide* the fact that they are cheating).
+His next step is to move around some of the proportions to calculate some additional values. Although the setup for these calculations is a bit confusing in the video, it essentially boils down to this: In the first set of equations, we tended to lump similar groups of observations together. We either put both types of ballots marked for one of the candidates together or we put both candidates' ballots together by which type of ballots they were. Here, though, Solomon makes an argument that there is something about changing the calculations so that they are unintelligible (e.g., lumping Trump's mail ballots together with Biden's early vote ballots) that makes it easier for government officials to "cheat" when they tally votes (or, alternatively he may be suggesting here that it makes it easier for them to *hide* the fact that they are cheating).
 
 In any event, Solomon presents some diagrams to try to show how this works, but they muddy the matter. The gist of the diagrams is that they are fashioned as Cartesian coordinate planes. The first of the two diagrams is in the traditional orientation, which he calls "standard orientation." In the second diagram, the plane appears to be oriented the same way, but nevertheless he calls this the "bastard orientation," perhaps because he goes on to switch the groupings of the ballots into seemingly absurd pairings. Although he uses different notation in this section of the video, we'll continue to use the earlier notation for clarity.
 
@@ -137,7 +137,6 @@ From here, Solomon presents the "bastard orientation" versions of equations \eqr
 
 To demonstrate, let's work through one of the examples Solomon presents in his video. The sample data are summarized in Table \@ref(tab:solhypo).
 
-```{=tex}
 \begin{table}[ht]
 \centering
 \caption{Data from Solomon's Hypothetical}
@@ -154,7 +153,6 @@ $N$ & $8000$ \\
 \hline
 \end{tabular}
 \end{table}
-```
 
 From these data, we can calculate the equations for $\alpha$ using both of his "orientations," which we show in the Standard Model equation set below. This example demonstrates that the answer is the same regardless which equation we use to calculate it; $\alpha_{std} = \alpha_{bsd} = 0.625$. Either way, Trump's vote share in this example is 65.5%. All of this is fine, as far as it goes.
 
@@ -169,7 +167,6 @@ From these data, we can calculate the equations for $\alpha$ using both of his "
         &= \frac{500}{500+1500} \times \frac{500+1500}{8000} + \frac{4500+1500}{8000} \times \frac{4500}{4500+1500} \label{eq: hypo2} \\
         &= 0.625
 \end{align}
-
 
 ### Solomon's Models
 
@@ -236,7 +233,7 @@ sumtable(cc2,
 
 ```
 
-The NED vote totals for these precincts are summarized in Table 2. From here, we can calculate the values we need to put into Solomon's equations. We've  summarized the resulting components in Table 3. At this point, we are ready to estimate some OLS models. Remember that this is where Solomon purports to find his evidence of vote-rigging. He doesn't show the model estimates in his video; he just shows what the parameter estimates are ($\lambda \approx 0.635$ and $1-\lambda \approx 0.365$) and uses those to make some graphs of his model predicting $\alpha_{bst}$. But we'll go ahead and replicate that part of the analysis here. We'll create two different models: one to identify the parameter estimates for $\Omega$ and $1-\Omega$ and the other to estimate $\lambda$ and $1-\lambda$. The model equations for the Standard Orientation model and the Bastard Orientation model are presented in equations \eqref{eq:stdols} and \eqref{eq:bstols}.
+The NED vote totals for these precincts are summarized in Table 2. From here, we can calculate the values we need to put into Solomon's equations. We've summarized the resulting components in Table 3. At this point, we are ready to estimate some OLS models. Remember that this is where Solomon purports to find his evidence of vote-rigging. He doesn't show the model estimates in his video; he just shows what the parameter estimates are ($\lambda \approx 0.635$ and $1-\lambda \approx 0.365$) and uses those to make some graphs of his model predicting $\alpha_{bst}$. But we'll go ahead and replicate that part of the analysis here. We'll create two different models: one to identify the parameter estimates for $\Omega$ and $1-\Omega$ and the other to estimate $\lambda$ and $1-\lambda$. The model equations for the Standard Orientation model and the Bastard Orientation model are presented in equations \eqref{eq:stdols} and \eqref{eq:bstols}.
 
 ```{r clark2, results = 'asis'}
 
@@ -256,7 +253,7 @@ sumtable(cc2,
 
 ```
 
-Recall that Solomon's complaint is that he was able to create models where the estimates of these parameters did *not* vary much between precincts. This is why he says that you can predict $\alpha$ so well without knowing the relative distribution of vote types; just the relative share of each vote type for each candidate. If it is true that $\Omega$ and $\lambda$ are very similar across precincts, we should be able to match the parameter estimates from each of these models to the mean of the parameters as they appear in Table 2. 
+Recall that Solomon's complaint is that he was able to create models where the estimates of these parameters did *not* vary much between precincts. This is why he says that you can predict $\alpha$ so well without knowing the relative distribution of vote types; just the relative share of each vote type for each candidate. If it is true that $\Omega$ and $\lambda$ are very similar across precincts, we should be able to match the parameter estimates from each of these models to the mean of the parameters as they appear in Table 2.
 
 Because we already know their means in the data, we know that we should expect to see something close to $\Omega \approx$ `r round(mean(cc2$omega, na.rm = TRUE), 2)` and something like $\lambda \approx$ `r round(mean(cc2$lambda, na.rm = TRUE), 2)` in these models. If we are in fact able to estimate a value for each of these parameters that is largely constant among precincts, these estimates should be statistically significant (i.e., they should have very small p-values as denoted by a lot of stars next to the estimate) and the model should explain a very high percentage of the variance in the dependent variable (i.e., in Trump's share of the NED votes). We would know the latter is the case if we observe $R^2$ values that are very close to 1. Because of the way our data are organized, we should also expect that the intercept of the model should be approximately zero.
 
@@ -275,10 +272,9 @@ texreg(list(std.fit, bst.fit),
        caption.above = TRUE)
 ```
 
-Table 4 demonstrates that we *are* able to derive estimates for the parameters $\Omega$ and $\lambda$ (and, by definition, $1-\Omega$ and $1-\lambda$). Notice that the intercept term in both equations is approximately zero. The estimate for $\Omega_{std}=$ `r round(std.fit$coefficients[2],3)`, which is very close to the mean from Table 3. This is exactly what we'd expect. But it's the high $R^2$, which almost 1, that tells us that this model does a near-perfect job of estimating Trump's NED vote share without us inputting the value of $\Omega$ into the model.
+Table 4 demonstrates that we *are* able to derive estimates for the parameters $\Omega$ and $\lambda$ (and, by definition, $1-\Omega$ and $1-\lambda$). Notice that the intercept term in both equations is approximately zero. The estimate for $\Omega_{std}=$ `r round(std.fit$coefficients[2],3)`, which is very close to the mean from Table 3. This is exactly what we'd expect. But it's the high $R^2$, which is almost 1, that tells us that this model does a near-perfect job of estimating Trump's NED vote share without us inputting the value of $\Omega$ into the model.
 
 The story is similar for our estimate of $\lambda$. In the right-hand column of Table 4, we see that $\lambda_{bst}=$ `r round(bst.fit$coefficients[2],2)`, which is also very close to the mean calculated in Table 3. Although Solomon did not provide us with his OLS-derived estimate of $\alpha$, he did tell us that his estimate for $\lambda$ was 0.635, which is very similar to our $\hat{\lambda}_{bst}$. Again, this parameter estimate is statistically significant and the model explains nearly all of the variance in the estimate of Trump's NED vote share (since $R^2=1.00$).
-
 
 ```{r figz2, fig.cap="Predicted Values of Trump Vote Share"}
 
@@ -292,13 +288,11 @@ plot_grid(std.plt, bst.plt)
 
 ```
 
-
 We can see how this works by looking at plots of the predicted $\alpha$ values for both of these models. These are presented in Figure 2. In the first plot, we have values of $x$ at the second quartile, the median, and the fourth quartile in red, blue, and green, respectively. If Trump's share of the early vote ($x$) is at its median (the blue line) and his share of the mail votes is about 50%, his total vote share is expected to be a touch over 50%. The shaded area around each of the lines represents the confidence interval around these predictions. Given the results from Table 4, the fact that these bands are extremely narrow isn't surprising. This just means that we can be very confident in the estimates of $\alpha_{std}$ generated by this equation.
 
 The story is very similar in the second plot. Even though the pieces of information we're using to derive the estimate of $\lambda$ are somewhat nonsensical, we are still able to use that estimated $\lambda_{bst}$ to predict Trump's share of the NED votes with great precision. This plot shows that, if Trump's share of the subdominant vote $h$ is about 60% and his share of the dominant vote $g$ is about 60%, we can expect his total NED vote share to be about 65%.
 
 Taken together, this shows that Solomon *is* correct that the relative percentage of early votes and mail votes is very consistent across Clark County precincts in the 2020 presidential election, as are the relative percentage of dominant votes and subdominant votes in the Bastard Orientation. This isn't anything to be surprised by, as we will explain shortly. First, though, let's apply this same strategy to the Washoe County Primary in 2024.
-
 
 ```{r, eval=FALSE, results='asis', fig.cap="All the Model Variables are Highly Correlated"}
 
@@ -315,14 +309,12 @@ GGally::ggcorr(cc2,
 
 ```
 
-
 ### Applying Solomon's Math to Washoe County Primary 2024
 
 In the report alleging fraud in the Washoe County 2024 Primary Election [@sigmatime2024] (the Report), we see Solomon's math applied to the Reno City Council Ward 5 race and two nonpartisan school trustee primaries (Districts A and D). We'll replicate the analysis of the City Council race here. This race was between four candidates: Browning-Peuchaud (SBP) votes, Cassidy (BMC), Reese (DTR), and Webster (TCW). According to the Washoe County Election Summary Report [@Election2024], the vote shares were as follows: TCW with 17.31%, SBP with 18.10%, BMC with 27.45%, and DTR winning with 37.14%. However, because DTR won with less than 50% of the vote, the top two vote getters (BMC and DTR) will appear on the general election ballot in November 2024.
 
 The setup for this application of Solomon's math is a bit different from the example in the video. Let's establish some notation to get us started. I'll use candidate initials with the following subscripts: $m$ for mail vote counts, $e$ for early vote counts, and $d$ for election day vote counts. And, although it is certainly possible to reorganize the equations to accommodate this, Solomon reports that ChatGPT recommended to him that he arrange the inputs as in Table \@ref(tab:renodata).
 
-```{=tex}
 \begin{table}[ht]
 \centering
 \caption{Terms for RCC Ward 5 Model}
@@ -339,7 +331,6 @@ $N$ & $A+B+C+D$ \\
 \hline
 \end{tabular}
 \end{table}
-```
 
 Unlike the terms used in the Trump-Biden 2020 example, these combinations of values do not make obvious sense. Solomon does note, rightly, that looking at a sub-county race means that there are very few precincts that can be incorporated into the analysis. This is what is referred to as a "small-$n$" problem. Having a the same number of variables or more relative to the number of observations (here, precincts) in the data means that the model cannot be estimated. Since we have $n=17$ districts with all of the relevant information for the analysis, we fall well short of that. However, Solomon also notes that "the Defense could quickly argue that the model is overfitted" [@sigmatime2024, 4]. It is true that complex models on small datasets lack power. It is also true that overfitting can be a real problem, leading to misleading inferences if we're using the model for prediction or hypothesis testing. It is probably wise, then, to try to simplify the model to include only the necessary variables that measure the underlying concepts that we think will help us predict our outcome (here, that's $\alpha$). These variables should be sensible, though, and it's not immediately clear from the Report whether this specification makes sense for what Solomon is trying to do.
 
@@ -446,13 +437,13 @@ sumtable(reno5.sm,
 
 ```
 
-We've summarized the components and the calculated variables in Table 7. Again, the resulting proportions in $g$, $h$, $\lambda$, and $\alpha$ don't make much immediate sense. For example, here's how we would describe $g$ in words: 
+We've summarized the components and the calculated variables in Table 7. Again, the resulting proportions in $g$, $h$, $\lambda$, and $\alpha$ don't make much immediate sense. For example, here's how we would describe $g$ in words:
 
-> $g$ represents the percentage of BMC's early vote, BMC's election day vote, SBP's election day vote, DTR's mail vote, and SBP's mail vote that are not DTR's mail vote nor SBP's mail vote. 
+> $g$ represents the percentage of BMC's early vote, BMC's election day vote, SBP's election day vote, DTR's mail vote, and SBP's mail vote that are not DTR's mail vote nor SBP's mail vote.
 
 If Solomon's original argument about the Bastard Orientation is that the groupings make no sense, that certainly applies the way he's organized things here. In any event, the numbers we get are close to what Solomon presents in the Report [@sigmatime2024]. He finds that the mean of $\lambda$, $\bar{\lambda} = 0.57$ with a standard deviation of $\sigma_{(\lambda)}= 0.0$. Our figures are similar.
 
-Before moving on, there is a very important difference in the structure of this equation compared to the equation in the Trump-Biden example from the YouTube video [@solomonFish2023] that we worked through earlier. There, $\lambda$ represented the share of all NED votes that were from the candidates' dominant vote forms. Because of this, it made sense to think of the coefficient on $g$ as being $\hat{\lambda}$ because $g$ was the Trump's dominant vote as a proportion of all of the dominant votes. Similarly, we could conceptualize the coefficient on $h$ as being $1-\lambda$ because all of the NED votes fell in either the dominant or subdominant category (thus the proportions must sum to 1) and $h$ was the Trump's subdominant votes as a percentage of all of the subdominant votes. However, this is not the case in the Reno City Council Ward 5 example. As Solomon notes in his Report, "even though there's [*sic*] four candidates and three ways of voting, not all twelve vote totals were assigned to A, B, C, and D" [@sigmatime2024, 4]. Although not all of the possibilities are included in the model, each of the components that are part of $g$ and $h$ are also the only components used to calculate $\alpha$. 
+Before moving on, there is a very important difference in the structure of this equation compared to the equation in the Trump-Biden example from the YouTube video [@solomonFish2023] that we worked through earlier. There, $\lambda$ represented the share of all NED votes that were from the candidates' dominant vote forms. Because of this, it made sense to think of the coefficient on $g$ as being $\hat{\lambda}$ because $g$ was the Trump's dominant vote as a proportion of all of the dominant votes. Similarly, we could conceptualize the coefficient on $h$ as being $1-\lambda$ because all of the NED votes fell in either the dominant or subdominant category (thus the proportions must sum to 1) and $h$ was the Trump's subdominant votes as a percentage of all of the subdominant votes. However, this is not the case in the Reno City Council Ward 5 example. As Solomon notes in his Report, "even though there's [*sic*] four candidates and three ways of voting, not all twelve vote totals were assigned to A, B, C, and D" [@sigmatime2024, 4]. Although not all of the possibilities are included in the model, each of the components that are part of $g$ and $h$ are also the only components used to calculate $\alpha$.
 
 If we hadn't worked our way through one of these already, readers might be surprised that this mishmash of data could come together to explain $\alpha$, which here is defined as the sum of BMC's early and election day votes and TCW's mail votes as a percentage of all of the votes in the Ward 5 election. But we *have* already seen how independent variables made out of the same components as the dependent variable do a really good job of predicting that dependent variable.
 
@@ -507,13 +498,12 @@ To understand why the $R^2$ statistics in the models are so high, it's important
 This same idea holds for the high $R^2$ values for the models of the Reno City Council Ward 5 primary. Although the components used to calculate the variables $g$ and $h$ in the model don't do a good job of characterizing useful information about the race, they are still calculated using proportions that make up the proportion $\alpha$. It might help to see the regression equation written in terms of the quantities $A$, $B$, $C$, and $D$ as defined by Solomon. Here, since we haven't established that the coefficient on $h$ is equivalent to $1-\lambda$, we'll use $\upsilon$ instead:
 
 \captionedequationset{Equation for Ward 5 Primary} \vspace*{-\baselineskip}
-```{=tex}
+
 \begin{equation}
 \frac{A + C}{A + B + C + D}= \hat{\beta}_0 + \hat{\lambda} \frac{A}{A+D} + \hat{\upsilon} \frac{C}{C + B} + \varepsilon
 \end{equation}
-```
 
-But this isn't quite what Solomon's issue is, really. Recall Solomon's overall argument that the values of $\Omega$ and $\lambda$ could not possibly be equal across all of the precincts in the county in a fair election. If we look a bit closer, though, $\Omega$ and $\lambda$ are *not* equal across these precincts. Table 7, for example, shows that $\lambda$ has a mean of 0.57 and a standard deviation of 0.057. The values across the precincts range from 0.52 to 0.63. This means that there is variation around the means. 
+But this isn't quite what Solomon's issue is, really. Recall Solomon's overall argument that the values of $\Omega$ and $\lambda$ could not possibly be equal across all of the precincts in the county in a fair election. If we look a bit closer, though, $\Omega$ and $\lambda$ are *not* equal across these precincts. Table 7, for example, shows that $\lambda$ has a mean of 0.57 and a standard deviation of 0.057. The values across the precincts range from 0.52 to 0.63. This means that there is variation around the means.
 
 We can see that variation in histograms for these values, which appear in Figure \@ref(fig:hists1). Although these histograms are tall and skinny, they still show a reasonable amount of variation. Remember that $\Omega$ and $\lambda$ are measures of one vote type as a proportion of all votes. This means that they are on a scale of 0-1. For example, the difference between $\lambda = 0.5$ and $lambda = 0.6$ in the histogram is equivalent to shifting from 500 dominant vote ballots to 600 dominant vote ballots in a precinct with 1000 total NED votes. This demonstrates that, while the percent of the NED votes that are early votes ($\Omega$) and the percent of NED votes that are dominant votes ($\lambda$) are similar across precincts, they are certainly not identical.
 
@@ -590,7 +580,7 @@ In all, the existing research shows that there is little intrinsic partisan diff
 
 ### Conclusion: Vote Share Equations
 
-In this section, we have evaluated the claims made in the Beadles post and the work by Solomon that Beadles cites there. We have investigated the premise of the *Vote Share Equations* argument and found no evidence to suggest that vote totals have been adjusted to meet a precise proportion of votes by candidate and NED vote type. Instead, we have found evidence that the OLS equations that underpin the claim that NED utilization rates by party are equal across the precincts. Instead, those models show a predictable level of consistency in utilization rates given the polarizing messages received by Republicans by their party's leader. Because Republicans were admonished against using mail ballots, it is not surprising that many of them opted for in-person early voting to avoid the risk of contracting COVID-19 at crowded election-day polling places. 
+In this section, we have evaluated the claims made in the Beadles post and the work by Solomon that Beadles cites there. We have investigated the premise of the *Vote Share Equations* argument and found no evidence to suggest that vote totals have been adjusted to meet a precise proportion of votes by candidate and NED vote type. Instead, we have found evidence that the OLS equations that underpin the claim that NED utilization rates by party are equal across the precincts. Instead, those models show a predictable level of consistency in utilization rates given the polarizing messages received by Republicans by their party's leader. Because Republicans were admonished against using mail ballots, it is not surprising that many of them opted for in-person early voting to avoid the risk of contracting COVID-19 at crowded election-day polling places.
 
 <!-- Your References section will appear here -->
 
