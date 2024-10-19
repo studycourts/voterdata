@@ -54,6 +54,7 @@ library(GGally)
 library(datawizard)
 library(broom)
 library(tidyverse)
+library(GGally)
 
 ```
 
@@ -297,6 +298,23 @@ We can see how this works by looking at plots of the predicted $\alpha$ values f
 The story is very similar in the second plot. Even though the pieces of information we're using to derive the estimate of $\lambda$ are somewhat nonsensical, we are still able to use that estimated $\lambda_{bst}$ to predict Trump's share of the NED votes with great precision. This plot shows that, if Trump's share of the subdominant vote $h$ is about 60% and his share of the dominant vote $g$ is about 60%, we can expect his total NED vote share to be about 65%.
 
 Taken together, this shows that Solomon *is* correct that the relative percentage of early votes and mail votes is very consistent across Clark County precincts in the 2020 presidential election, as are the relative percentage of dominant votes and subdominant votes in the Bastard Orientation. This isn't anything to be surprised by, as we will explain shortly. First, though, let's apply this same strategy to the Washoe County Primary in 2024.
+
+
+```{r, eval=FALSE, results='asis', fig.cap="All the Model Variables are Highly Correlated"}
+
+# Correlogram
+GGally::ggcorr(cc2,
+               digits = 2,
+               label = TRUE,
+               label_alpha = TRUE, 
+               legend.position = "right",
+               layout.exp = 2) +
+  theme_minimal()
+# I added this code above as a suggestion for a helpful figure that could intuitively explain why the OLS models work so well. All the IVs are highly correlated--even if the VIF scores don't rise above the standard 5 threshold--and each of the variables happens to be highly correlated with the DVs as well. This isn't surprising given that everything is a composite of the same underlying data. 
+
+
+```
+
 
 ### Applying Solomon's Math to Washoe County Primary 2024
 
